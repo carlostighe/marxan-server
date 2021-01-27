@@ -97,7 +97,7 @@ ROLE_UNAUTHORISED_METHODS = {
     "Admin": []
 }
 """Dict that controls access to REST services using role-based authentication. Add REST services that you want to lock down to specific roles - a class added to an array will make that method unavailable for that role"""
-MARXAN_SERVER_VERSION = "v1.0.1"
+MARXAN_SERVER_VERSION = "v1.0.7"
 """The version of marxan-server."""
 MARXAN_REGISTRY = "https://marxanweb.github.io/general/registry/marxan.json"
 """The url of the Marxan Registry which contains information on hosted Marxan Web servers, base maps and other global level variables"""
@@ -172,10 +172,9 @@ DICT_PAD = 25
 LOGGING_LEVEL = logging.INFO
 """Tornado logging level that controls what is logged to the console - options are logging.INFO, logging.DEBUG, logging.WARNING, logging.ERROR, logging.CRITICAL. All SQL statements can be logged by setting this to logging.DEBUG."""
 
-# pdoc3 dict to whitelist private members
+#pdoc3 dict to whitelist private members for the documentation
 __pdoc__ = {}
-privateMembers = ['_addParameter', '_authenticate', '_authoriseRole', '_authoriseUser', '_checkCORS', '_checkZippedShapefile', '_cleanup', '_cloneProject', '_copyDirectory', '_createFeaturePreprocessingFileFromImport', '_createProject', '_createPuFile', '_createUser', '_createZipfile', '_dataFrameContainsValue', '_debugSQLStatement', '_deleteAllFiles', '_deleteArchiveFiles', '_deleteCost', '_deleteFeature', '_deleteFeatureClass', '_deletePlanningUnitGrid', '_deleteProject', '_deleteRecordsInTextFile', '_deleteShutdownFile', '_deleteTileset', '_deleteZippedShapefile', '_dismissNotification', '_estimatePlanningUnitCount', '_exportAndZipShapefile', '_finishCreatingFeature', '_finishImportingFeature', '_getAllProjects', '_getAllSpeciesData', '_getBestSolution', '_getCosts', '_getDictValue', '_getEndOfLine', '_getExceptionLastLine', '_getFeature', '_getFilesInFolderRecursive', '_getGML', '_getIntArrayFromArg', '_getKeyValue', '_getKeyValuesFromFile', '_getKeys', '_getMBAT', '_getMarxanLog', '_getMissingValues', '_getNotificationsData', '_getNumberOfRunsCompleted', '_getNumberOfRunsRequired', '_getOutputFilename', '_getOutputSummary', '_getPlanningUnitGrids', '_getPlanningUnitsCostData', '_getPlanningUnitsData', '_getProjectData', '_getProjectInputData',
-                  '_getProjectInputFilename', '_getProjects', '_getProjectsForFeature', '_getProjectsForPlanningGrid', '_getProjectsForUser', '_getProtectedAreaIntersectionsData', '_getPuvsprStats', '_getRESTMethod', '_getRunLogs', '_getSafeProjectName', '_getServerData', '_getShapefileFieldNames', '_getSimpleArguments', '_getSolution', '_getSpeciesData', '_getSpeciesPreProcessingData', '_getSummedSolution', '_getUniqueFeatureclassName', '_getUserData', '_getUsers', '_getUsersData', '_get_free_space_mb', '_guestUserEnabled', '_importDataFrame', '_importPlanningUnitGrid', '_invalidateProtectedAreaIntersections', '_isProjectRunning', '_loadCSV', '_normaliseDataFrame', '_padDict', '_preprocessProtectedAreas', '_puidsArrayToPuDatFormat', '_raiseError', '_readFile', '_readFileUnicode', '_reprocessProtectedAreas', '_requestIsWebSocket', '_resetNotifications', '_runCmd', '_setCORS', '_setFolderPaths', '_setGlobalVariables', '_shapefileHasField', '_tilesetExists', '_txtIntsToList', '_unzipFile', '_unzipShapefile', '_updateCosts', '_updateDataFrame', '_updateParameters', '_updatePuFile', '_updateRunLog', '_updateSpeciesFile', '_uploadTileset', '_uploadTilesetToMapbox', '_validateArguments', '_writeCSV', '_writeFile', '_writeFileUnicode', '_writeToDatFile', '_zipfolder']
+privateMembers = ['getGeometryType','_addParameter', '_authenticate', '_authoriseRole', '_authoriseUser', '_checkCORS', '_checkZippedShapefile', '_cleanup', '_cloneProject', '_copyDirectory', '_createFeaturePreprocessingFileFromImport', '_createProject', '_createPuFile', '_createUser', '_createZipfile', '_dataFrameContainsValue', '_debugSQLStatement', '_deleteAllFiles', '_deleteArchiveFiles', '_deleteCost', '_deleteFeature', '_deleteFeatureClass', '_deletePlanningUnitGrid', '_deleteProject', '_deleteRecordsInTextFile', '_deleteShutdownFile', '_deleteTileset', '_deleteZippedShapefile', '_dismissNotification', '_estimatePlanningUnitCount', '_exportAndZipShapefile', '_finishCreatingFeature', '_finishImportingFeature', '_getAllProjects', '_getAllSpeciesData', '_getBestSolution', '_getCosts', '_getDictValue', '_getEndOfLine', '_getExceptionLastLine', '_getFeature', '_getFilesInFolderRecursive', '_getGML', '_getIntArrayFromArg', '_getKeyValue', '_getKeyValuesFromFile', '_getKeys', '_getMBAT', '_getMarxanLog', '_getMissingValues', '_getNotificationsData', '_getNumberOfRunsCompleted', '_getNumberOfRunsRequired', '_getOutputFilename', '_getOutputSummary', '_getPlanningUnitGrids', '_getPlanningUnitsCostData', '_getPlanningUnitsData', '_getProjectData', '_getProjectInputData', '_getProjectInputFilename', '_getProjects', '_getProjectsForFeature', '_getProjectsForPlanningGrid', '_getProjectsForUser', '_getProtectedAreaIntersectionsData', '_getPuvsprStats', '_getRESTMethod', '_getRunLogs', '_getSafeProjectName', '_getServerData', '_getShapefileFieldNames', '_getSimpleArguments', '_getSolution', '_getSpeciesData', '_getSpeciesPreProcessingData', '_getSummedSolution', '_getUniqueFeatureclassName', '_getUserData', '_getUsers', '_getUsersData', '_get_free_space_mb', '_guestUserEnabled', '_importDataFrame', '_importPlanningUnitGrid', '_invalidateProtectedAreaIntersections', '_isProjectRunning', '_loadCSV', '_normaliseDataFrame', '_padDict', '_preprocessProtectedAreas', '_puidsArrayToPuDatFormat', '_raiseError', '_readFile', '_readFileUnicode', '_reprocessProtectedAreas', '_requestIsWebSocket', '_resetNotifications', '_runCmd', '_setCORS', '_setFolderPaths', '_setGlobalVariables', '_shapefileHasField', '_tilesetExists', '_txtIntsToList', '_unzipFile', '_unzipShapefile', '_updateCosts', '_updateDataFrame', '_updateParameters', '_updatePuFile', '_updateRunLog', '_updateSpeciesFile', '_uploadTileset', '_uploadTilesetToMapbox', '_validateArguments', '_writeCSV', '_writeFile', '_writeFileUnicode', '_writeToDatFile', '_zipfolder']
 for m in privateMembers:
     __pdoc__.update({m: True})
 
@@ -694,9 +693,8 @@ def _setFolderPaths(obj, arguments):
         obj.user = user
         # get the project folder and the input and output folders
         if "project" in list(arguments.keys()):
-            obj.folder_project = obj.folder_user + \
-                arguments["project"][0].decode("utf-8") + os.sep
-            obj.folder_input = obj.folder_project + "input" + os.sep
+            obj.folder_project = obj.folder_user + arguments["project"][0].decode("utf-8").strip()  + os.sep
+            obj.folder_input =  obj.folder_project + "input" + os.sep
             obj.folder_output = obj.folder_project + "output" + os.sep
             obj.project = obj.get_argument("project")
 
@@ -1121,7 +1119,11 @@ async def _preprocessProtectedAreas(obj, planning_grid_name, output_folder):
     Returns:
         None  
     """
-    # do the intersection
+    #set the threshold for the intersection area
+    threshold = 0.5
+    #puids for all intersecting protected areas with a dissolved area of >50% of the planning unit 
+    # intersectionData = await obj.executeQuery(sql.SQL("SELECT iucn_cat, puid FROM (SELECT iucn_cat, puid, (ST_Area(ST_Transform(ST_Union(ST_Intersection(wdpa.geometry,grid.geometry)), 3410))/ST_Area(ST_Transform(grid.geometry, 3410))) percent_overlap FROM marxan.wdpa, marxan.{} grid WHERE ST_Intersects(wdpa.geometry, grid.geometry) AND wdpaid IN (SELECT wdpaid FROM (SELECT envelope FROM marxan.metadata_planning_units WHERE feature_class_name = %s) AS sub, marxan.wdpa WHERE ST_Intersects(wdpa.geometry, envelope)) GROUP BY 1,2) AS sub2 WHERE percent_overlap >= %s ORDER BY 1,2").format(sql.Identifier(planning_grid_name)), data=[planning_grid_name, threshold], returnFormat="DataFrame")
+    #puids for all intersecting protected areas
     intersectionData = await obj.executeQuery(sql.SQL("SELECT DISTINCT iucn_cat, grid.puid FROM marxan.wdpa, marxan.{} grid WHERE ST_Intersects(wdpa.geometry, grid.geometry) AND wdpaid IN (SELECT wdpaid FROM (SELECT envelope FROM marxan.metadata_planning_units WHERE feature_class_name =  %s) AS sub, marxan.wdpa WHERE ST_Intersects(wdpa.geometry, envelope)) ORDER BY 1,2").format(sql.Identifier(planning_grid_name)), data=[planning_grid_name], returnFormat="DataFrame")
     # write the intersections to file
     intersectionData.to_csv(
@@ -2021,8 +2023,9 @@ def _unzipShapefile(folder, filename, rejectMultipleShapefiles=True, searchTerm=
         raise MarxanServicesError(
             "The zip file '" + filename + "' does not exist")
     zip_ref = zipfile.ZipFile(folder + filename, 'r')
-    filenames = zip_ref.namelist()
-    # check there is only one set of files
+    #get the filenames ignoring any duplicates in mac archive files
+    filenames = [f for f in zip_ref.namelist() if f[:8]!='__MACOSX']
+    #check there is only one set of files
     extensions = [f[-3:] for f in filenames]
     if (len(extensions) != len(set(extensions))) and rejectMultipleShapefiles:
         raise MarxanServicesError("The zip file contains multiple shapefiles. See <a href='" +
@@ -2238,9 +2241,15 @@ async def _finishImportingFeature(feature_class_name, name, description, source,
     except psycopg2.errors.InvalidTableDefinition:
         logging.warning("primary key already exists")
         pass
-    try:
-        # create a record for this new feature in the metadata_interest_features table
-        id = await pg.execute(sql.SQL("INSERT INTO marxan.metadata_interest_features (feature_class_name, alias, description, creation_date, _area, tilesetid, extent, source, created_by) SELECT %s, %s, %s, now(), sub._area, %s, sub.extent, %s, %s FROM (SELECT ST_Area(ST_Transform(geom, 3410)) _area, box2d(geom) extent FROM (SELECT ST_Union(geometry) geom FROM marxan.{}) AS sub2) AS sub RETURNING oid;").format(sql.Identifier(feature_class_name)), data=[feature_class_name, name, description, tilesetId, source, user], returnFormat="Array")
+    try:    
+        #create a record for this new feature in the metadata_interest_features table
+        geometryType = await pg.getGeometryType(feature_class_name)
+        if (geometryType != 'ST_Point'):
+            #if the feature class is a polygon then get the total area
+            id = await pg.execute(sql.SQL("INSERT INTO marxan.metadata_interest_features (feature_class_name, alias, description, creation_date, _area, tilesetid, extent, source, created_by) SELECT %s, %s, %s, now(), sub._area, %s, sub.extent, %s, %s FROM (SELECT ST_Area(ST_Transform(geom, 3410)) _area, box2d(geom) extent FROM (SELECT ST_Union(geometry) geom FROM marxan.{}) AS sub2) AS sub RETURNING oid;").format(sql.Identifier(feature_class_name)), data=[feature_class_name, name, description, tilesetId, source, user], returnFormat="Array")
+        else:
+            #if the feature class is a point layer then get the total amount
+            id = await pg.execute(sql.SQL("INSERT INTO marxan.metadata_interest_features (feature_class_name, alias, description, creation_date, _area, tilesetid, extent, source, created_by) SELECT %s, %s, %s, now(), sub._area, %s, sub.extent, %s, %s FROM (SELECT amount _area, box2d(combined) extent FROM (SELECT SUM(value) amount, st_collect(geometry) combined FROM marxan.{}) AS sub2) AS sub RETURNING oid;").format(sql.Identifier(feature_class_name)), data=[feature_class_name, name, description, tilesetId, source, user], returnFormat="Array")
     except (MarxanServicesError) as e:
         await _deleteFeatureClass(feature_class_name)
         if "Database integrity error" in e.args[0]:
@@ -2946,7 +2955,19 @@ async def _cleanup():
         if td.days > 1:
             # if the file is older than 1 day, then delete it
             os.remove(file)
-
+    #folder cleanup - orphaned projects
+    #get the list of users
+    users = _getUsers() 
+    #iterate through the users
+    for user in users:
+        #get the users projects
+        projects = glob.glob(MARXAN_USERS_FOLDER + user + os.sep + "*/")
+        #iterate through the projects
+        for project in projects:
+            if len(glob.glob(project + "*")) == 0:
+                #remove any that have no files
+                shutil.rmtree(project)        
+    
 ####################################################################################################################################################################################################################################################################
 # generic classes
 ####################################################################################################################################################################################################################################################################
@@ -3022,9 +3043,9 @@ class PostGIS():
                     await cur.execute(sql)
                 except psycopg2.errors.UniqueViolation as e:
                     raise MarxanServicesError("That item already exists")
-                except psycopg2.errors.InternalError:
-                    raise MarxanServicesError("Query stopped")
-                # if the query doesnt return any records then return
+                except psycopg2.errors.InternalError as e:
+                    raise MarxanServicesError("Query stopped: " + e.args[0])
+                #if the query doesnt return any records then return
                 if returnFormat == None:
                     return
                 # get the results
@@ -3198,6 +3219,17 @@ class PostGIS():
         """
         await self.execute(sql.SQL("ALTER TABLE marxan.{tbl} ADD CONSTRAINT {key} PRIMARY KEY ({col});").format(tbl=sql.Identifier(feature_class_name), key=sql.Identifier("idx_" + uuid.uuid4().hex), col=sql.Identifier(column)))
 
+    async def getGeometryType(self, feature_class_name):
+        """Gets the geometry type of the passed feature_class.
+        
+        Args:
+            feature_class_sname (string): The name of the feature class in PostGIS to return the geometry type for.  
+        Returns:
+            string: The PostGIS geometry type, e.g. ST_PointgetGeometryType  
+        """
+        geometryType = await self.execute(sql.SQL("SELECT st_geometrytype(geometry) FROM marxan.{feature_class_name} LIMIT 1;").format(feature_class_name=sql.Identifier(feature_class_name)), returnFormat="Array")  
+        return geometryType[0][0]
+        
 ####################################################################################################################################################################################################################################################################
 # subclass of Popen to allow registering callbacks when processes complete on Windows (tornado.process.Subprocess.set_exit_callback is not supported on Windows)
 ####################################################################################################################################################################################################################################################################
@@ -3906,17 +3938,14 @@ class validateUser(MarxanRESTHandler):
             _getUserData(self, True)
             # compare the passed password to the one in the user.dat file
             if self.get_argument("password") == self.userData["PASSWORD"]:
-                # if the request is secure, then set the secure response header for the cookie
-                secure = True if self.request.protocol == 'https' else False
-                # set a response cookie for the authenticated user
-                self.set_secure_cookie("user", self.get_argument(
-                    "user"), httponly=True, samesite=None, secure=secure)
-                # set a response cookie for the authenticated users role
-                self.set_secure_cookie(
-                    "role", self.userData["ROLE"], httponly=True, samesite=None, secure=secure)
-                # set the response
-                self.send_response(
-                    {'info': "User " + self.user + " validated"})
+                #if the request is secure, then set the secure response header for the cookie
+                secure = True if (self.request.protocol == 'https' or self.request.host == '61c92e42cb1042699911c485c38d52ae.vfs.cloud9.eu-west-1.amazonaws.com:8081') else False
+                #set a response cookie for the authenticated user
+                self.set_secure_cookie("user", self.get_argument("user"), httponly = True, samesite = None, secure = secure) 
+                #set a response cookie for the authenticated users role
+                self.set_secure_cookie("role", self.userData["ROLE"], httponly = True, samesite = None, secure = secure)
+                #set the response
+                self.send_response({'info': "User " + self.user + " validated"})
             else:
                 # invalid login
                 raise MarxanServicesError("Invalid user/password")
@@ -4943,7 +4972,7 @@ class createFeaturePreprocessingFileFromImport(MarxanRESTHandler):
 
 
 class addParameter(MarxanRESTHandler):
-    """REST HTTP handler. Creates a new parameter in a *.dat file, either the user (user.dat), project (project.dat) or server (server.dat), by iterating through all the files and adding the key/value if it doesnt already exist. The required arguments in the request.arguments parameter are: The required arguments in the request.arguments parameter are:  
+    """REST HTTP handler. Creates a new parameter in a *.dat file, either the user (user.dat), project (project.dat) or server (server.dat), by iterating through all the files and adding the key/value if it doesnt already exist. The required arguments in the request.arguments parameter are: 
     Args:
         type (string): The type of configuration file to add the parameter to. One of server, user or project.  
         key (string): The key to create/update.  
@@ -5811,7 +5840,7 @@ class runMarxan(MarxanWebSocketHandler):
         user (string): The name of the user.  
         project (string): The name of the project to run.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "user": The name of the user,  
@@ -5974,7 +6003,7 @@ class importFeatures(MarxanWebSocketHandler):
         description (string): Optional. A description for the imported feature class.   
         splitfield (string): Optional. The name of the field to use to split the features in the shapefile into separate feature classes. The separate feature classes will have a name derived from the values in this field.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the import process,  
@@ -6031,12 +6060,13 @@ class importFeatures(MarxanWebSocketHandler):
                         description = self.get_argument('description')
                     else:  # multiple feature names
                         feature_class_name = _getUniqueFeatureclassName("fs_")
-                        await pg.execute(sql.SQL("CREATE TABLE marxan.{feature_class_name} AS SELECT * FROM marxan.{scratchTable} WHERE {splitField} = %s;").format(feature_class_name=sql.Identifier(feature_class_name), scratchTable=sql.Identifier(scratch_name), splitField=sql.Identifier(splitfield)), [feature_name])
-                        description = "Imported from '" + shapefile + \
-                            "' and split by '" + splitfield + "' field"
-                    # add an index and a record in the metadata_interest_features table and start the upload to mapbox
-                    id, uploadId = await _finishCreatingFeature(feature_class_name, feature_name, description, "Imported shapefile", self.get_current_user())
-                    # append the uploadId to the uploadIds array
+                        await pg.execute(sql.SQL("CREATE TABLE marxan.{feature_class_name} AS SELECT * FROM marxan.{scratchTable} WHERE {splitField} = %s;").format(feature_class_name=sql.Identifier(feature_class_name),scratchTable=sql.Identifier(scratch_name),splitField=sql.Identifier(splitfield)),[feature_name])
+                        description = "Imported from '" + shapefile + "' and split by '" + splitfield + "' field"
+                    #add an index and a record in the metadata_interest_features table and start the upload to mapbox
+                    geometryType = await pg.getGeometryType(feature_class_name)
+                    source = "Imported shapefile" if (geometryType != 'ST_Point') else "Imported shapefile (points)"
+                    id, uploadId = await _finishCreatingFeature(feature_class_name, feature_name, description, source, self.get_current_user())            
+                    #append the uploadId to the uploadIds array
                     uploadIds.append(uploadId)
                     self.send_response({'id': id, 'feature_class_name': feature_class_name, 'uploadId': uploadId,
                                         'info': "Feature '" + feature_name + "' imported", 'status': 'FeatureCreated'})
@@ -6064,7 +6094,7 @@ class importGBIFData(MarxanWebSocketHandler):
         taxonKey (string): The GBIF taxon key for the feature.  
         scientificName (string): The GBIF scientific name for the feature.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the import process,  
@@ -6254,7 +6284,7 @@ class createFeaturesFromWFS(MarxanWebSocketHandler):
         description (string): A description for the feature.  
         featuretype (string): The layer name within the WFS service representing the feature class to import.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the import process,  
@@ -6317,7 +6347,7 @@ class exportProject(MarxanWebSocketHandler):
         user (string): The name of the user.  
         project (string): The name of the project to export.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the export process,  
@@ -6403,7 +6433,7 @@ class importProject(MarxanWebSocketHandler):
         description (string): A description for the imported project.  
         filename (string): The name of the *.mxw file (minus the .mxw extension).  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the import process,  
@@ -6429,6 +6459,13 @@ class importProject(MarxanWebSocketHandler):
             await super().open({'info': "Importing project.."})
         except MarxanServicesError:  # authentication/authorisation error
             pass
+        except zipfile.BadZipFile as e:
+            #remove the project folder
+            shutil.rmtree(projectFolder)
+            #set the start time of the websocket - this has not yet been set as super().open() was not called
+            self.startTime = datetime.datetime.now()
+            #return an error
+            self.close({'error': 'File is not a zip file' })
         else:
             # FEATURES
             # import all of the shapefiles - those that already exist are skipped
@@ -6512,6 +6549,7 @@ class importProject(MarxanWebSocketHandler):
             shutil.rmtree(projectFolder + EXPORT_PU_SHP_FOLDER)
             os.remove(projectFolder + EXPORT_F_METADATA)
             os.remove(projectFolder + EXPORT_PU_METADATA)
+            #remove the zip file
             os.remove(IMPORT_FOLDER + self.get_argument('filename'))
             # return the results
             self.close({'info': "Import project complete"})
@@ -6545,8 +6583,8 @@ class QueryWebSocketHandler(MarxanWebSocketHandler):
 
 
 class preprocessFeature(QueryWebSocketHandler):
-    """REST WebSocket Handler. Preprocesses the features by intersecting them with the planning units. The required arguments in the request.arguments parameter are:  
-
+    """REST WebSocket Handler. Preprocesses the features by intersecting them with the planning units. If the features are polygons, then the areas are summarised for each planning unit. If the features are points, then the sum of the 'value' field is computed for all points within each planning unit. The required arguments in the request.arguments parameter are:  
+    
     Args:
         user (string): The name of the user.  
         project (string): The name of the project.  
@@ -6555,7 +6593,7 @@ class preprocessFeature(QueryWebSocketHandler):
         alias (string): The alias for the feature.  
         planning_grid_name (string): The name of the planning grid.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on the preprocessing,  
@@ -6577,9 +6615,16 @@ class preprocessFeature(QueryWebSocketHandler):
                                'user', 'project', 'id', 'feature_class_name', 'alias', 'planning_grid_name'])
             # run the query asynchronously and wait for the results
             try:
-                intersectionData = await self.executeQuery(sql.SQL("SELECT metadata.oid::integer species, puid pu, ST_Area(ST_Transform(ST_Union(ST_Intersection(grid.geometry,feature.geometry)),3410)) amount from marxan.{grid} grid, marxan.{feature} feature, marxan.metadata_interest_features metadata where st_intersects(grid.geometry,feature.geometry) and metadata.feature_class_name = %s group by 1,2;").format(grid=sql.Identifier(self.get_argument('planning_grid_name')), feature=sql.Identifier(self.get_argument('feature_class_name'))), data=[self.get_argument('feature_class_name')], returnFormat="DataFrame")
-            except (MarxanServicesError) as e:  # if the user stops the preprocessing
-                self.close({'error': e.args[0]})
+                #see what geometry type the feature class has
+                geometryType = await pg.getGeometryType(self.get_argument('feature_class_name'))
+                if (geometryType != 'ST_Point'):
+                    #if the geometry type is a polygon, then get the area for each planning unit
+                    intersectionData = await self.executeQuery(sql.SQL("SELECT metadata.oid::integer species, puid pu, ST_Area(ST_Transform(ST_Union(ST_Intersection(grid.geometry,feature.geometry)),3410)) amount from marxan.{grid} grid, marxan.{feature} feature, marxan.metadata_interest_features metadata where st_intersects(grid.geometry,feature.geometry) and metadata.feature_class_name = %s group by 1,2;").format(grid=sql.Identifier(self.get_argument('planning_grid_name')), feature=sql.Identifier(self.get_argument('feature_class_name'))), data=[self.get_argument('feature_class_name')], returnFormat="DataFrame")
+                else:
+                    #if the geometry type is a point, then sum the point values for each planning unit
+                    intersectionData = await self.executeQuery(sql.SQL("SELECT metadata.oid::integer species, puid pu, SUM(feature.value) amount FROM marxan.{grid} grid, marxan.{feature} feature, marxan.metadata_interest_features metadata WHERE st_intersects(grid.geometry,feature.geometry) AND metadata.feature_class_name = %s GROUP BY 1,2;").format(grid=sql.Identifier(self.get_argument('planning_grid_name')), feature=sql.Identifier(self.get_argument('feature_class_name'))), data=[self.get_argument('feature_class_name')], returnFormat="DataFrame")
+            except (MarxanServicesError) as e: # if the user stops the preprocessing
+                self.close({'error': e.args[0] })
             else:
                 # get the existing data
                 try:
@@ -6627,7 +6672,7 @@ class preprocessProtectedAreas(QueryWebSocketHandler):
         project (string): The name of the project.  
         planning_grid_name (string): The name of the planning grid.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress statements on preprocessing,  
@@ -6665,7 +6710,7 @@ class reprocessProtectedAreas(QueryWebSocketHandler):
     Args:
         None  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Informational message,  
@@ -6698,7 +6743,7 @@ class preprocessPlanningUnits(QueryWebSocketHandler):
         user (string): The name of the user.  
         project (string): The name of the project.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Informational message,  
@@ -6746,7 +6791,7 @@ class createPlanningUnitGrid(QueryWebSocketHandler):
         areakm2 (string): The area of the planning grid in Km2.  
         shape (string): The shape of the planning grid units. One of square or hexagon.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Informational message,  
@@ -6802,7 +6847,7 @@ class runGapAnalysis(QueryWebSocketHandler):
         user (string): The name of the user.  
         project (string): The name of the project.  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Informational message,  
@@ -6838,7 +6883,7 @@ class resetDatabase(QueryWebSocketHandler):
     Args:
         None  
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress information on the database reset,  
@@ -6912,7 +6957,7 @@ class updateWDPA(QueryWebSocketHandler):
     Args:
         downloadUrl (string): The url endpoint where the new version of the WDPA can be downloaded from. This is normally set in the Marxan Registry. 
     Returns:
-        WebSocket dict messages with one or more the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
+        WebSocket dict messages with one or more of the following keys (if the class raises an exception, the error message is included in an 'error' key/value pair):  
 
         {  
             "info": Contains detailed progress information on the update,  
